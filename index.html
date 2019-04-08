@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Overview Map</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+		top:0px;
+	    left:400px;
+		width:1200px;
+        height: 960px;
+    </style>
+	<style>
+	.box{
+		width:50px;
+		height:50px;
+	}
+	.excellent{
+		background:#2b83ba;
+		opacity: 1;
+	}
+	.good{
+		background:#abdda4;
+		opacity: 1;
+	}
+	.normal{
+		background:#ffec00;
+		opacity: 1;
+	}
+	.bad{
+		background:#fdae61;
+		opacity: 1;
+	}
+	.terrible{
+		background:#d7191c;
+		opacity: 1;
+	}
+	</style>
+  </head>
+  <body style="background-color:#E0FFFF;">
+	<h1 align="center">Netherland Energy Consumption Report</h1>
+	
+	<div style="position:absolute;top:100px;left:100px;width:200px;height:100px;">
+	<input name="viewtype" type="radio" value="gas" checked="checked" />Gas Consumption View
+	</div>
+	
+	<div style="position:absolute;top:200px;left:100px;width:200px;height:100px;">
+	<input name="viewtype" type="radio" value="eletricity" checked="checked"/>Eletricity Consumption View
+	</div>
+	
+	<div style="position:absolute;top:300px;left:100px;width:200px;height:100px;">
+	<select  id="compid" onchange="selectcompany()">
+   			<option>Please choose a company</option>
+   			<option>Enaxis</option>
+   			<option>Liander</option>
+   			<option>Stedin</option>
+   	</select>
+	</div>
+	
+	<div style="position:absolute;top:400px;left:100px;width:200px;height:100px;">
+	<select  id="yearid" onchange="selectyear()">
+   			<option>Please choose a year</option>
+   			<option>2010</option>
+   			<option>2011</option>
+   			<option>2012</option>
+			<option>2013</option>
+			<option>2014</option>
+			<option>2015</option>
+			<option>2016</option>
+			<option>2017</option>
+			<option>2018</option>
+			<option>2019</option>
+   	</select>
+	</div>
+	<div class="box excellent" style="position:absolute;top:300px;left:1700px"></div>
+	<div class="words" style="position:absolute;top:360px;left:1700px">Excellent</div>
+	<div class="box good" style="position:absolute;top:400px;left:1700px"> </div>
+	<div class="words" style="position:absolute;top:460px;left:1705px">Good</div>
+	<div class="box normal" style="position:absolute;top:500px;left:1700px"> </div>
+	<div class="words" style="position:absolute;top:560px;left:1700px">Normal</div>
+	<div class="box bad" style="position:absolute;top:600px;left:1700px"> </div>
+	<div class="words" style="position:absolute;top:660px;left:1710px">Bad</div>
+	<div class="box terrible" style="position:absolute;top:700px;left:1700px"> </div>
+	<div class="words" style="position:absolute;top:760px;left:1700px">Terrible</div>
+    <div id="map"></div>
+    <script>
+    function initMap() {
+        var myLatlng = {lat: 52.370216, lng: 4.895168};
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 10,
+          center: myLatlng
+        });
+		var geocoder = new google.maps.Geocoder();
+		var myaddress = new Array();
+		myaddress[0] = "Amsterdam";
+		myaddress[1] = "Rotterdam";
+		myaddress[2] = "Dan Haag";
+		myaddress[3] = "Leiden";
+		for (var i=0;i<myaddress.length;i++)
+		{
+			geocoder.geocode({'address': myaddress[i]}, function(results, status) {
+			if (status === 'OK') {
+				var marker = new google.maps.Marker({
+					map: map,
+					position: results[0].geometry.location
+				});
+				var circle = new google.maps.Circle({
+					map: map,
+					radius: 3000,    // 10 miles in metres
+					fillColor: '#2b83ba'
+				});
+				circle.bindTo('center', marker, 'position');
+			} else {
+				alert('Geocode was not successful for the following reason: ' + status);
+				}
+			});
+		}
+		var infowindow = new google.maps.InfoWindow({
+			content: " "
+		});
+		google.maps.event.addListener(marker, 'click', function() {
+		infowindow.setContent(
+				'<p>City name:Amsterdam<p>'+
+                '<button onclick="switchPage2()">Analyze</button>'+
+				'<button onclick="seitchPage3()">Compare</button>');
+		infowindow.open(map, this);
+		});
+		marker.addListener('click', function() {
+          infowindow.open(map, marker);
+        });
+	}
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAomFT5XPxZfKIoAe-1jY4gC0zkTPy_TyI&callback=initMap"
+    async defer></script>
+	<script src="https://code.jquery.com/jquery.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	
+  </body>
+</html>
