@@ -1,0 +1,28 @@
+from flask import Flask
+from flask_cors import CORS
+from flask_restful import Api, Resource
+import numpy as np
+import pandas as pd
+
+app = Flask(__name__)
+api = Api(app)
+CORS(app)
+
+class ROC(Resource):
+	def get(self, page):
+		json_list = []
+		if(page == "page1"):
+			e_data = pd.read_csv("e_city_data.csv")
+			g_data = pd.read_csv("g_city_data.csv")
+			
+			for row, col_name in zip(e_data.values, e_data):
+				json_list.append({col_name[0]: row[0], col_name[2]: row[2], col_name[1]: row[1], "type": "electricity", col_name[3]: row[3]})
+			for row, col_name in zip(g_data.values, g_data):
+				json_list.append({col_name[0]: row[0], col_name[2]: row[2], col_name[1]: row[1], "type": "gas", col_name[3]: row[3]})
+		return json_list
+
+
+api.add_resource(ROC, "/<string:page>")
+
+if __name__ == '__main__':
+	app.run(debug=True)
