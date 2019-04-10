@@ -87,52 +87,61 @@
 	<div class="box terrible" style="position:absolute;top:700px;left:1700px"> </div>
 	<div class="words" style="position:absolute;top:760px;left:1700px">Terrible</div>
     <div id="map"></div>
+	
+	<script src="https://d3js.org/d3.v4.min.js"></script>
     <script>
+	function loadData() {
+		var url = "http://localhost:5000/page1";
+		d3.json(url, function(data){
+			initMap();
+			
+		})
+		
+	}
+	
     function initMap() {
         var myLatlng = {lat: 52.370216, lng: 4.895168};
         var map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 10,
+          zoom: 8,
           center: myLatlng
         });
+		var myaddress = ["Amsterdam","Rotterdam","S GRAVENHAGE","Leiden"];
 		var geocoder = new google.maps.Geocoder();
-		var myaddress = new Array();
-		myaddress[0] = "Amsterdam";
-		myaddress[1] = "Rotterdam";
-		myaddress[2] = "Dan Haag";
-		myaddress[3] = "Leiden";
-		for (var i=0;i<myaddress.length;i++)
+		var infowindow = new google.maps.InfoWindow({})
+		var marker,i;
+		for (i=0;i<myaddress.length;i++)
 		{
 			geocoder.geocode({'address': myaddress[i]}, function(results, status) {
 			if (status === 'OK') {
-				var marker = new google.maps.Marker({
+				marker = new google.maps.Marker({
 					map: map,
 					position: results[0].geometry.location
 				});
 				var circle = new google.maps.Circle({
 					map: map,
-					radius: 3000,    // 10 miles in metres
+					radius: 3000,    
 					fillColor: '#2b83ba'
 				});
 				circle.bindTo('center', marker, 'position');
-			} else {
-				alert('Geocode was not successful for the following reason: ' + status);
-				}
-			});
+				google.maps.event.addListener(marker, 'click', (function (marker,i) {
+					return function () {
+						infowindow.setContent(myaddress[i]+
+											  '<button onclick="switchPage2()">Analyze</button>'
+											  +'<button onclick="switchPage3()">Compare</button>');
+						infowindow.open(map, marker);
+						}
+					})(marker,i)); 
+				} else {
+					alert('Geocode was not successful for the following reason: ' + status);
+					}
+			});	
 		}
-		var infowindow = new google.maps.InfoWindow({
-			content: " "
-		});
-		google.maps.event.addListener(marker, 'click', function() {
-		infowindow.setContent(
-				'<p>City name:Amsterdam<p>'+
-                '<button onclick="switchPage2()">Analyze</button>'+
-				'<button onclick="seitchPage3()">Compare</button>');
-		infowindow.open(map, this);
-		});
-		marker.addListener('click', function() {
-          infowindow.open(map, marker);
-        });
 	}
+	function switchPage2(){
+		alert("buzz");
+		//var index = "lemon"; var url = "receive.html?index="+index; $("#more").click(function(){ window.location.href = url; });
+	}
+
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAomFT5XPxZfKIoAe-1jY4gC0zkTPy_TyI&callback=initMap"
     async defer></script>
@@ -141,3 +150,7 @@
 	
   </body>
 </html>
+
+
+
+);
