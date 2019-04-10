@@ -99,7 +99,7 @@ if(cityname != "") {
           .style("font-size", "18px")
           .attr("y", -20)
           .attr("x", 340)
-          .text("Annual Consume For ".concat(cityname.replace("%20", " ")));
+          .text("Annual Consume For ".concat(cityname.replace("%20", " ").replace("%27", "'")));
   }
 
   // Data source 
