@@ -13,20 +13,20 @@ var NBAdata = [{Pos: "2010", meanAge: 2686},
 // Generate a SVG
 var margin = {
   top: 60,
-  right: 830,
+  right: 80,
   bottom:60,
   left: 80
 }
 
-var width = 300;
+var width = 400;
 var height = 250;
 
 var svg = d3.select("body")
-.append("svg")
-.attr("width", margin.left + margin.right + width)
-.attr("height", margin.top + margin.bottom + height)
-.append("g")
-.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+						.append("svg")
+							.attr("width", margin.left + margin.right + width)
+							.attr("height", margin.top + margin.bottom + height)
+						.append("g")
+							.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
 // Define the scales
@@ -115,11 +115,8 @@ function updateTextInput(val) {
     .attr("width", x_Scale.rangeBand())
     .attr("y", function(d) { return y_Scale(d.meanAge);})
     .attr("height", function(d) { return height  - y_Scale(d.meanAge);})
-    .attr("fill", function(d,val){
-      console.log(d.Pos);
-      console.log(typeof(d.Pos));
-      console.log(val);
-      if(d.Pos == val.toString()) {
+    .attr("fill", function(d){
+      if(d.Pos == val) {
         return "red"
       }
       else {
@@ -129,3 +126,60 @@ function updateTextInput(val) {
     .on('mouseover', retriever.show)
     .on('mouseout', retriever.hide)
 }
+
+
+
+
+
+
+
+var svg2 = d3.select("body")
+.append("svg")
+.attr("width", margin.left + margin.right + width)
+.attr("height", margin.top + margin.bottom + height)
+.append("g")
+.attr("transform", "translate(" + margin.right + "," + margin.top + ")");
+
+
+// Draw data and show retrieve interactivity
+var Bar = svg2.selectAll("Bar")
+.data(NBAdata)
+.enter()
+.append("rect")
+.attr("class", "Bar")
+.attr("x", function(d) { return x_Scale(d.Pos);})
+.attr("width", x_Scale.rangeBand())
+.attr("y", function(d) { return y_Scale(d.meanAge);})
+.attr("height", function(d) { return height  - y_Scale(d.meanAge);})
+.attr("fill", "blue")
+.on('mouseover', retriever.show)
+.on('mouseout', retriever.hide)
+
+
+// Add labels for the axes
+svg2.append("g")
+.attr("class", "xAxis")
+.attr("transform", "translate(0," + height + ")")
+.call(x_Axis)
+.append("text")
+.style("font-size", "18px")
+.attr("y", 40)
+.attr("x", 120)
+.text("Year");
+
+svg2.append("g")
+.attr("class", "yAxis")
+.call(y_Axis)
+.append("text")
+.attr("transform", "rotate(-90)")
+.style("font-size", "18px")
+.attr("y", -65)
+.attr("x", -200)
+.text("Annual Consumption");
+
+// Add title for the plot
+svg2.append("text")
+.style("font-size", "18px")
+.attr("y", -20)
+.attr("x", 30)
+.text("Annual Consumption For Amsterdam")

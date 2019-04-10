@@ -90,14 +90,10 @@
 	
 	<script src="https://d3js.org/d3.v4.min.js"></script>
     <script>
-	function loadData() {
-		var url = "http://localhost:5000/page1";
-		d3.json(url, function(data){
-			initMap();
-			
-		})
-		
-	}
+    	var url = "http://localhost:5000/page1";
+    	d3.json(url, function(data) {
+    		console.log(data);
+    	})
 	
     function initMap() {
         var myLatlng = {lat: 52.370216, lng: 4.895168};
