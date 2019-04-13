@@ -10,28 +10,27 @@ api = Api(app)
 CORS(app)
 
 class page1(Resource):
-	def get(self, page, company, year, energy_type):
+	def get(self, company, year, energy_type):
 		json_list = []
-		if(page == "page1"):
-			if(energy_type == "electricity"):
-				data = pd.read_csv("data/e_city_data.csv")
-				data =data.loc[data["companies"] == company]
-				data = pd.DataFrame(data.loc[data["years"] == int(year)].reset_index(drop = True))
-				for row in data.values:
-					json_list.append({"cityname": row[0], "rating": row[3]})
-			elif(energy_type == "gas"):
-				data = pd.read_csv("data/g_city_data.csv")
-				data =data.loc[data["companies"] == company]
-				data = pd.DataFrame(data.loc[data["years"] == int(year)].reset_index(drop = True))
-				for row in data.values:
-					json_list.append({"cityname": row[0], "rating": row[3]})
-			else:
-				e_data = pd.read_csv("e_city_data.csv")
-				g_data = pd.read_csv("g_city_data.csv")
-				for row in e_data.values:
-					json_list.append({"cityname": row[0], "company": row[2], "year": row[1], "type": "electricity", "rating": row[3]})
-				for row in g_data.values:
-					json_list.append({"cityname": row[0], "company": row[2], "year": row[1], "type": "gas", "rating": row[3]})
+		if(energy_type == "electricity"):
+			data = pd.read_csv("data/e_city_data.csv")
+			data =data.loc[data["companies"] == company]
+			data = pd.DataFrame(data.loc[data["years"] == int(year)].reset_index(drop = True))
+			for row in data.values:
+				json_list.append({"cityname": row[0], "rating": row[3]})
+		elif(energy_type == "gas"):
+			data = pd.read_csv("data/g_city_data.csv")
+			data =data.loc[data["companies"] == company]
+			data = pd.DataFrame(data.loc[data["years"] == int(year)].reset_index(drop = True))
+			for row in data.values:
+				json_list.append({"cityname": row[0], "rating": row[3]})
+		else:
+			e_data = pd.read_csv("e_city_data.csv")
+			g_data = pd.read_csv("g_city_data.csv")
+			for row in e_data.values:
+				json_list.append({"cityname": row[0], "company": row[2], "year": row[1], "type": "electricity", "rating": row[3]})
+			for row in g_data.values:
+				json_list.append({"cityname": row[0], "company": row[2], "year": row[1], "type": "gas", "rating": row[3]})
 		return json_list
 
 class page2LS(Resource):
@@ -72,7 +71,7 @@ class page2mLS(Resource):
 			json_list.append({"sp": "%.2f" % row[0], "lp": "%.2f" % row[1], "c": row[2], "city":row[3], "company":row[4]})
 		return json_list
 		
-api.add_resource(page1, "/<string:page>/<string:company>/<string:year>/<string:energy_type>")
+api.add_resource(page1, "/page1/<string:company>/<string:year>/<string:energy_type>")
 api.add_resource(page2LS, "/<string:year>/<string:city>/<output_type>")
 api.add_resource(page2C, "/<string:city>")
 api.add_resource(page2mLS, "/year/<string:year>")

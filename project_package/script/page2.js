@@ -333,18 +333,21 @@ var svg4 = d3.select("body")
              .append("g")
                .attr("transform", "translate(" + margin4.left + "," + margin4.top + ")");
                
+
+var retriever4 = d3.tip()
+                   .attr('class', 'd3Tip')
+                   .offset([-15, 0])
+                   .html(function(d) { return "<strong>City:</strong> <span style='color:black'>" + d.city + 
+                     	                        "</span><br/>Low-tarif:</strong> <span style='color:black'>" + 
+                     	                        d.lp + "%</span><br/>Smartmeter:</strong> <span style='color:black'>" + 
+                     	                        d.sp + "%</span>";});
+   
+svg4.call(retriever4); 
+
 // Visualize Data
 function mean_LS_chart(data) {
 
-  var retriever4 = d3.tip()
-                     .attr('class', 'd3Tip')
-                     .offset([-15, 0])
-                     .html(function(d) { return "<strong>City:</strong> <span style='color:black'>" + d.city + 
-                     	                          "</span><br/>Low-tarif:</strong> <span style='color:black'>" + 
-                     	                          d.lp + "%</span><br/>Smartmeter:</strong> <span style='color:black'>" + 
-                     	                          d.sp + "%</span>";});
-   
-  svg4.call(retriever4);         
+        
   
   var circle = svg4.selectAll("circle")
                    .data(data)

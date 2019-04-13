@@ -9,7 +9,7 @@
 	</head>
 	<body bgcolor = "#E0FFFF">
 		<h1 align="center">Netherland city's energy consumption report</h1>
-   <br /><input type="button" value="Return to Previous Page" onclick="load()"/><br>
+		<br /><input type="button" value="Return to Previous Page" onclick="load()"/><br>
     <!-- Set radio buttons for user input. Learn from the source: https://www.w3schools.com/tags/att_input_type_radio.asp -->
     <!-- Set the Electricity as default energy type -->
     <br/> Choose an energy type:
@@ -20,34 +20,31 @@
 
 		<div class="slidecontainer">
 			Choose a Year:
-  <input type="range" min="2010" max="2019" value="2010" class="slider" id="myRange" onchange="updateTextInput(this.value)"/>
- <output type="text" id="textoutput" value=""/>2010
-</div>
+			<input type="range" min="2010" max="2019" value="2010" class="slider" id="myRange" onchange="updateTextInput(this.value)"/>
+			<output type="text" id="textoutput" value=""/>2010
+		</div>
 
-    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <!--script src="https://d3js.org/d3.v4.min.js"></script-->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"></script>
+		<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+		<script src="script/page2.js"></script>
+		<style>
+			.d3Tip {
+				background: rgba(255, 255, 0, 0.3);
+				border-radius: 10px;
+				color: black;
+				line-height: 1.5;
+				padding: 6px;
+			}
 
-<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
-<script src="script/page2.js"></script>
-
-<style>
-.d3Tip {
-  background: rgba(255, 255, 0, 0.3);
-  border-radius: 10px;
-  color: black;
-  line-height: 1.5;
-  padding: 6px;
-}
-
-.slider {
-  -webkit-appearance: none;
-  width: 20%;
-  height: 15px;
-  border-radius: 5px;
-  background: #d3d3d3;
-  opacity: 0.7;
-}
-
-</style>
+      .slider {
+         -webkit-appearance: none;
+         width: 20%;
+         height: 15px;
+         border-radius: 5px;
+         background: #d3d3d3;
+         opacity: 0.7;
+      }
+      </style>
 	</body>
 </html>
