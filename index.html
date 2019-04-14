@@ -15,16 +15,17 @@
         height: 960px;
     </style>
 	<style>
-	.box{
-		width:50px;
-		height:50px;
+	.circle{
+		width: 50px;
+		height: 50px;
+		border-radius: 50px;
 	}
 	.excellent{
 		background:#2b83ba;
 		opacity: 1;
 	}
 	.good{
-		background:#abdda4;
+		background:#2ca25f;
 		opacity: 1;
 	}
 	.normal{
@@ -49,21 +50,20 @@
 	</div>
 	
 	<div style="position:absolute;top:200px;left:100px;width:200px;height:100px;">
-	<input name="viewtype" type="radio" value="eletricity" checked="checked"/>Eletricity Consumption View
+	<input name="viewtype" type="radio" value="electricity" checked="checked"/>Electricity Consumption View
 	</div>
 	
-	<div style="position:absolute;top:300px;left:100px;width:200px;height:100px;">
-	<select  id="compid" onchange="selectcompany()">
-   			<option>Please choose a company</option>
-   			<option>Enaxis</option>
+	<div style="position:absolute;top:300px;left:100px;width:200px;height:100px;">Please choose a company
+	<select  id="compid">
+   			<option>Enexis</option>
    			<option>Liander</option>
    			<option>Stedin</option>
+			<option>All</option>
    	</select>
 	</div>
 	
-	<div style="position:absolute;top:400px;left:100px;width:200px;height:100px;">
-	<select  id="yearid" onchange="selectyear()">
-   			<option>Please choose a year</option>
+	<div style="position:absolute;top:400px;left:100px;width:200px;height:100px;"><p>Please choose a year<p>
+	<select  id="yearid" >
    			<option>2010</option>
    			<option>2011</option>
    			<option>2012</option>
@@ -76,74 +76,179 @@
 			<option>2019</option>
    	</select>
 	</div>
-	<div class="box excellent" style="position:absolute;top:300px;left:1700px"></div>
+	
+	<div style="position:absolute;top:500px;left:90px;width:200px;height:100px;">
+	<br /><input type="button" value="Show Markers" onclick="showmarker()" />
+	</div>
+	<div style="position:absolute;top:500px;left:200px;width:200px;height:100px;">
+	<br /><input type="button" value="Hide Markers" onclick="hidemarker()" />
+	</div>
+	<div style="position:absolute;top:550px;left:150px;width:200px;height:100px;">
+	<br /><input type="button" value="Visualize" onclick="SeePredictedValue()" />
+	</div>
+	<h3 style="position:absolute;top:240px;left:1670px">Energy Rating</h3>
+	<div class="circle excellent" style="position:absolute;top:300px;left:1700px"></div>
 	<div class="words" style="position:absolute;top:360px;left:1700px">Excellent</div>
-	<div class="box good" style="position:absolute;top:400px;left:1700px"> </div>
+	<div class="circle good" style="position:absolute;top:400px;left:1700px"> </div>
 	<div class="words" style="position:absolute;top:460px;left:1705px">Good</div>
-	<div class="box normal" style="position:absolute;top:500px;left:1700px"> </div>
+	<div class="circle normal" style="position:absolute;top:500px;left:1700px"> </div>
 	<div class="words" style="position:absolute;top:560px;left:1700px">Normal</div>
-	<div class="box bad" style="position:absolute;top:600px;left:1700px"> </div>
+	<div class="circle bad" style="position:absolute;top:600px;left:1700px"> </div>
 	<div class="words" style="position:absolute;top:660px;left:1710px">Bad</div>
-	<div class="box terrible" style="position:absolute;top:700px;left:1700px"> </div>
+	<div class="circle terrible" style="position:absolute;top:700px;left:1700px"> </div>
 	<div class="words" style="position:absolute;top:760px;left:1700px">Terrible</div>
     <div id="map"></div>
 	
 	<script src="https://d3js.org/d3.v4.min.js"></script>
     <script>
-    	var url = "http://localhost:5000/page1";
-    	d3.json(url, function(data) {
-    		console.log(data);
-    	})
-	
-    function initMap() {
-        var myLatlng = {lat: 52.370216, lng: 4.895168};
-        var map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 8,
-          center: myLatlng
-        });
-		var myaddress = ["Amsterdam","Rotterdam","S GRAVENHAGE","Leiden"];
-		var geocoder = new google.maps.Geocoder();
-		var infowindow = new google.maps.InfoWindow({})
-		var marker,i;
-		for (i=0;i<myaddress.length;i++)
-		{
-			geocoder.geocode({'address': myaddress[i]}, function(results, status) {
-			if (status === 'OK') {
-				marker = new google.maps.Marker({
-					map: map,
-					position: results[0].geometry.location
-				});
-				var circle = new google.maps.Circle({
-					map: map,
-					radius: 3000,    
-					fillColor: '#2b83ba'
-				});
-				circle.bindTo('center', marker, 'position');
-				google.maps.event.addListener(marker, 'click', (function (marker,i) {
-					return function () {
-						infowindow.setContent(myaddress[i]+
-											  '<button onclick="switchPage2()">Analyze</button>'
-											  +'<button onclick="switchPage3()">Compare</button>');
-						infowindow.open(map, marker);
-						}
-					})(marker,i)); 
-				} else {
-					alert('Geocode was not successful for the following reason: ' + status);
-					}
-			});	
+	var map;
+	var marker,i,j;
+	var circles = [];
+	var markers = [];
+	var listeners = [];
+	var city;
+	function setMapOnAll(map) {
+        for (var i = 0; i < markers.length; i++) {
+          markers[i].setMap(map);
+        }
+     }
+	 function clearMarkers() {
+        setMapOnAll(null);
+     }
+	  function clearCircles() {
+        for (var i = 0; i < circles.length; i++) {
+			circles[i].setMap(null);
+        }
+     }
+	function deleteMarkers() {
+        clearMarkers();
+		clearCircles();
+        markers = [];
+		circles = [];
+      }
+	function initMap(){
+		var myLatlng = {lat: 52.370216, lng: 4.895168};
+		map = new google.maps.Map(document.getElementById('map'), {
+				zoom: 9,
+				center: myLatlng
+			});
 		}
+	function SeePredictedValue(){
+		deleteMarkers();
+		var circle;
+		var marker;
+		var radioList = document.getElementsByName("viewtype");
+		for(i=0; i<radioList.length; i++){
+			if(radioList[i].checked){
+				var viewtype = radioList[i].value;
+			}
+		}
+		var compSelect=document.getElementById("compid");
+		var compIndex=compSelect.selectedIndex;
+		var selectedcomp=compSelect.options[compIndex].value.toLowerCase() ;
+		
+		var yearSelect=document.getElementById("yearid");
+		var yearIndex=yearSelect.selectedIndex;
+		var selectedyear=yearSelect.options[yearIndex].value.toLowerCase();
+		var url = "http://localhost:5000/page1";
+		url = url.concat("/").concat(selectedcomp).concat("/").concat(selectedyear).concat("/").concat(viewtype);
+		page1_plot(url);
+		}
+		function page1_plot(url)
+		{
+		var result=[];
+		d3.json(url, function(data){
+			result=data;
+			//var geocoder = new google.maps.Geocoder();
+			var infowindow = new google.maps.InfoWindow();
+			for(i=0;i<data.length;i++){
+				(function(index){
+				var cityname=result[index].cityname;
+				var cityrating=result[index].rating;
+				var latitude=result[index].latitude;
+				var longtitude=result[index].longtitude;
+				var center = new google.maps.LatLng(latitude,longtitude);
+				marker = new google.maps.Marker({
+						map: map,
+						position: center,
+						title:cityname
+					});		
+				if(cityrating==1){
+					circle = new google.maps.Circle({
+						map: map,
+						radius: 2000,    
+						strokeColor:'#2b83ba',
+						fillColor: '#2b83ba'
+						});	
+					circle.bindTo('center', marker, 'position');
+					circles.push(circle);
+					}
+				if(cityrating==2){
+					circle = new google.maps.Circle({
+						map: map,
+						radius: 2000,    
+						strokeColor:'#2ca25f',
+						fillColor: '#2ca25f'
+					});	
+					circle.bindTo('center', marker, 'position');
+					circles.push(circle);
+				}
+				if(cityrating==3){
+					circle = new google.maps.Circle({
+						map: map,
+						radius: 2000,    
+						strokeColor:'#ffec00',
+						fillColor: '#ffec00'
+				});	
+					circle.bindTo('center', marker, 'position');
+					circles.push(circle);
+				}
+				if(cityrating==4){
+					circle = new google.maps.Circle({
+						map: map,
+						radius: 2000,
+						strokeColor:'#fdae61',								
+						fillColor: '#fdae61'
+				});	
+					circle.bindTo('center', marker, 'position');
+					circles.push(circle);
+				}
+				if(cityrating==5){
+					circle = new google.maps.Circle({
+						map: map,
+						position: center,
+						radius: 2000, 
+						strokeColor: '#d7191c',								
+						fillColor: '#d7191c'
+					});	
+					//circle.bindTo('center', marker, 'position');
+					circles.push(circle);
+				}
+				markers.push(marker);	
+				listeners[index]=google.maps.event.addListener(marker, 'click', function () {
+				city=cityname;
+				contentString = 'cityname:'+cityname+'<p>   <p>'+'<button onclick="switchPage2(city)">Analyze</button>';
+					infowindow.setContent(contentString);
+					infowindow.open(map, this);
+				});	
+				})(i);
+			}
+				clearMarkers()
+		})	
+		}
+	function switchPage2(cityname){
+		var eee=cityname
+		window.location.href="C:/Users/yzcvo/OneDrive/Documents/WeChat Files/chenyizhen7759/FileStorage/File/2019-04/project/page2.html?city="+eee;  
 	}
-	function switchPage2(){
-		alert("buzz");
-		//var index = "lemon"; var url = "receive.html?index="+index; $("#more").click(function(){ window.location.href = url; });
+	function showmarker(){
+		setMapOnAll(map);
 	}
-
-    </script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAomFT5XPxZfKIoAe-1jY4gC0zkTPy_TyI&callback=initMap"
-    async defer></script>
-	<script src="https://code.jquery.com/jquery.js"></script>
-	<script src="js/bootstrap.min.js"></script>
-	
+	function hidemarker(){
+		clearMarkers();
+	}
+	</script>
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAomFT5XPxZfKIoAe-1jY4gC0zkTPy_TyI&callback=initMap""
+	async defer></script>
   </body>
 </html>
 
