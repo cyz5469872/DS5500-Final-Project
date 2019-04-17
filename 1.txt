@@ -1,0 +1,17 @@
+Biggest problem:
+how to label the data
+
+try seveal way 
+use dbscan to find cluster
+use kmeans to restrict the cluster number
+the result is terrible 
+
+semi-supv ml
+label spreading
+random select 150 data point from each year each company
+try to rate and label the data by our observation
+then use the label spreading to learn and spreading the label to the rest data point
+then fail again
+most of the point have label A the best 
+
+so we use smartmeter perc as the reference to label the data.
