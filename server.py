@@ -15,35 +15,35 @@ class page1(Resource):
 		if(page == "page1"):
 			if(energy_type == "electricity"):
 				if(company == "all"):
-					data = pd.read_csv("data/eee.csv")
+					data = pd.read_csv("data/e_geocode_labeled.csv")
 					data = pd.DataFrame(data.loc[data["years"] == int(year)].reset_index(drop = True))
 					for row in data.values:
-						json_list.append({"cityname": row[0], "rating": row[3],"latitude":row[4], "longtitude":row[5]})
+						json_list.append({"cityname": row[0], "rating": row[5],"latitude":row[3], "longtitude":row[4]})
 				else:
-					data = pd.read_csv("data/eee.csv")
+					data = pd.read_csv("data/e_geocode_labeled.csv")
 					data =data.loc[data["companies"] == company]
 					data = pd.DataFrame(data.loc[data["years"] == int(year)].reset_index(drop = True))
 					for row in data.values:
-						json_list.append({"cityname": row[0], "rating": row[3],"latitude":row[4], "longtitude":row[5]})
+						json_list.append({"cityname": row[0], "rating": row[5],"latitude":row[3], "longtitude":row[4]})
 			elif(energy_type == "gas"):
 				if(company == "all"):
-					data = pd.read_csv("data/ggg.csv")
+					data = pd.read_csv("data/g_geocode_labeled.csv")
 					data = pd.DataFrame(data.loc[data["years"] == int(year)].reset_index(drop = True))
 					for row in data.values:
-						json_list.append({"cityname": row[0], "rating": row[3],"latitude":row[4], "longtitude":row[5]})
+						json_list.append({"cityname": row[0], "rating": row[5],"latitude":row[3], "longtitude":row[4]})
 				else:
-					data = pd.read_csv("data/ggg.csv")
+					data = pd.read_csv("data/g_geocode_labeled.csv")
 					data =data.loc[data["companies"] == company]
 					data = pd.DataFrame(data.loc[data["years"] == int(year)].reset_index(drop = True))
 					for row in data.values:
-						json_list.append({"cityname": row[0], "rating": row[3],"latitude":row[4], "longtitude":row[5]})
+						json_list.append({"cityname": row[0], "rating": row[5],"latitude":row[3], "longtitude":row[4]})
 			else:
-				e_data = pd.read_csv("eee.csv")
-				g_data = pd.read_csv("ggg.csv")
+				e_data = pd.read_csv("e_geocode_labeled.csv")
+				g_data = pd.read_csv("g_geocode_labeled.csv")
 				for row in e_data.values:
-					json_list.append({"cityname": row[0], "company": row[2], "year": row[1], "type": "electricity", "rating": row[3], "latitude":row[4], "longtitude":row[5]})
+					json_list.append({"cityname": row[0], "company": row[2], "year": row[1], "type": "electricity", "rating": row[5], "latitude":row[3], "longtitude":row[4]})
 				for row in g_data.values:
-					json_list.append({"cityname": row[0], "company": row[2], "year": row[1], "type": "gas", "rating": row[3], "latitude":row[4], "longtitude":row[5]})
+					json_list.append({"cityname": row[0], "company": row[2], "year": row[1], "type": "gas", "rating": row[5], "latitude":row[3], "longtitude":row[4]})
 		return json_list
 
 class page2LS(Resource):
