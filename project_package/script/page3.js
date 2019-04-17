@@ -3,7 +3,8 @@ var margin = {
 	right: 50, 
 	bottom: 100, 
 	left: 100};
-	
+
+// Modify from https://bl.ocks.org/arpitnarechania/dbf03d8ef7fffa446379d59db6354bac
 function Matrix(options) {
 	    var width = 400,
 	    height = 400,
@@ -18,7 +19,7 @@ function Matrix(options) {
   var maxValue = 1;
   var minValue = 0;
 
-	var svg = d3.select("#container")
+	var svg = d3.select(container)
 	            .append("svg")
 	              .attr("class", "canvas")
 	              .attr("width", width + margin.left + margin.right)
