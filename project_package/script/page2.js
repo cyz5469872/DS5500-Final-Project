@@ -7,7 +7,7 @@ if(cityname != "") {
     right: 80,
     bottom:60,
     left: 80
-  }
+  };
 
   var width = 1000;
   var height = 250;
@@ -573,6 +573,10 @@ function updateChangeInput() {
 }
 
 
-function load() {
+function main() {
 	window.location.href = "index.html";
+}
+
+function model_page() {
+	window.location.href = "page3.html";
 }

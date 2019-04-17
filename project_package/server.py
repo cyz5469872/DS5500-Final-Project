@@ -1,9 +1,14 @@
 from flask import Flask
 from flask_cors import CORS
 from flask_restful import Api, Resource
+
 import numpy as np
 import pandas as pd
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import confusion_matrix
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import minmax_scale
+from sklearn.preprocessing import StandardScaler
 
 app = Flask(__name__)
 api = Api(app)
@@ -102,10 +107,47 @@ class page2mPLS(Resource):
 				json_list.append({"sp": "%.2f" % row[0], "lp": "%.2f" % row[1], "c": row[2], "city":row[3], "company":row[4]})
 		return json_list
 		
+class page3modelV(Resource):
+	def get(self, start_year, end_year):
+		data = []
+		if(start_year > end_year):
+			temp = start_year
+			start_year = end_year
+			end_year = temp
+		if(start_year > 2019 or end_year < 2010):
+			start_year = 2010
+			end_year = 2019
+		else:
+			if(start_year < 2010):
+				start_year = 2010
+			if(end_year > 2019):
+				end_year = 2019
+		end_year += 1
+		for year in range(start_year, end_year):
+			local_scaler = StandardScaler()
+			raw_data = pd.read_csv("data/e_labeled_data/%s.csv" % year)
+			raw_data = raw_data.loc[raw_data["consume_per_conn"] != np.inf].reset_index(drop = True)
+			raw_data = raw_data.iloc[:, [1,2,3,4,5,6,8]]
+			raw_data.iloc[:,[1,2,3]] = local_scaler.fit_transform(raw_data.iloc[:,[1,2,3]])
+			data.append(raw_data)
+		data = pd.concat(data, ignore_index = True)
+		train_X, test_X, train_y, test_y = train_test_split(data.iloc[:,[0,1,2,3,4,5]], data.iloc[:,6], test_size = 0.4)
+		global_scaler = StandardScaler()
+		train_X.iloc[:,[0,4,5]] = global_scaler.fit_transform(train_X.iloc[:,[0,4,5]])
+		test_X.iloc[:,[0,4,5]] = global_scaler.transform(test_X.iloc[:,[0,4,5]])
+		
+		# model
+		model = RandomForestClassifier(n_estimators = 100, oob_score = True, n_jobs = 8)
+		model.fit(train_X, train_y)
+		cm = confusion_matrix(test_y, model.predict(test_X))
+		cm = np.round(cm / cm.sum(axis=1)[:, np.newaxis], 2)
+		return cm.tolist()
+			
 api.add_resource(page1, "/page1/<string:company>/<string:year>/<string:energy_type>")
 api.add_resource(page2PLS, "/<string:energy_type>/<string:year>/<string:city>/<output_type>")
 api.add_resource(page2C, "/<string:energy_type>/<string:city>")
 api.add_resource(page2mPLS, "/mean/<string:energy_type>/<string:year>")
+api.add_resource(page3modelV, "/model/<int:start_year>/<int:end_year>")
 
 if __name__ == '__main__':
 	page1_e_labeled = pd.read_csv("data/e_geocode_labeled.csv")
