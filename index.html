@@ -29,11 +29,11 @@
 		opacity: 1;
 	}
 	.normal{
-		background:#ffec00;
+		background:#feb24c;
 		opacity: 1;
 	}
 	.bad{
-		background:#fdae61;
+		background:#a6611a;
 		opacity: 1;
 	}
 	.terrible{
@@ -129,7 +129,7 @@
 	function initMap(){
 		var myLatlng = {lat: 52.370216, lng: 4.895168};
 		map = new google.maps.Map(document.getElementById('map'), {
-				zoom: 9,
+				zoom: 8,
 				center: myLatlng
 			});
 		}
@@ -176,7 +176,7 @@
 				if(cityrating==1){
 					circle = new google.maps.Circle({
 						map: map,
-						radius: 2000,    
+						radius: 1000,    
 						strokeColor:'#2b83ba',
 						fillColor: '#2b83ba'
 						});	
@@ -186,7 +186,7 @@
 				if(cityrating==2){
 					circle = new google.maps.Circle({
 						map: map,
-						radius: 2000,    
+						radius: 1000,    
 						strokeColor:'#2ca25f',
 						fillColor: '#2ca25f'
 					});	
@@ -196,9 +196,9 @@
 				if(cityrating==3){
 					circle = new google.maps.Circle({
 						map: map,
-						radius: 2000,    
-						strokeColor:'#ffec00',
-						fillColor: '#ffec00'
+						radius: 1000,    
+						strokeColor:'#feb24c',
+						fillColor: '#feb24c'
 				});	
 					circle.bindTo('center', marker, 'position');
 					circles.push(circle);
@@ -206,9 +206,9 @@
 				if(cityrating==4){
 					circle = new google.maps.Circle({
 						map: map,
-						radius: 2000,
-						strokeColor:'#fdae61',								
-						fillColor: '#fdae61'
+						radius: 1000,
+						strokeColor:'#a6611a',								
+						fillColor: '#a6611a'
 				});	
 					circle.bindTo('center', marker, 'position');
 					circles.push(circle);
@@ -216,12 +216,11 @@
 				if(cityrating==5){
 					circle = new google.maps.Circle({
 						map: map,
-						position: center,
-						radius: 2000, 
+						radius: 1000, 
 						strokeColor: '#d7191c',								
 						fillColor: '#d7191c'
 					});	
-					//circle.bindTo('center', marker, 'position');
+					circle.bindTo('center', marker, 'position');
 					circles.push(circle);
 				}
 				markers.push(marker);	
@@ -247,7 +246,7 @@
 		clearMarkers();
 	}
 	</script>
-	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAomFT5XPxZfKIoAe-1jY4gC0zkTPy_TyI&callback=initMap""
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAomFT5XPxZfKIoAe-1jY4gC0zkTPy_TyI&language=en&callback=initMap""
 	async defer></script>
   </body>
 </html>
